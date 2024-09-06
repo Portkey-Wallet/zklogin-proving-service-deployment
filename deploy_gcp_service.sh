@@ -49,15 +49,15 @@ gcloud compute instance-templates create $INSTANCE_TEMPLATE_NAME \
     --tags=http-server,https-server \
     --metadata-from-file startup-script=portkey_zklogin_prover_setup.sh
 
-# Create a firewall rule to allow incoming traffic on port 80
-gcloud compute firewall-rules create allow-http \
+# Create firewall rules to allow incoming traffic on ports 80 and 443
+gcloud compute firewall-rules create allow-http-https \
     --direction=INGRESS \
     --priority=1000 \
     --network=default \
     --action=ALLOW \
-    --rules=tcp:80 \
+    --rules=tcp:80,tcp:443 \
     --source-ranges=0.0.0.0/0 \
-    --target-tags=http-server
+    --target-tags=http-server,https-server
 
 # 7. Create an instance with the template
 gcloud compute instances create $INSTANCE_NAME \

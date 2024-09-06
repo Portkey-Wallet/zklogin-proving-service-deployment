@@ -5,7 +5,7 @@ circuitName=zkLogin
 
 # Update and install dependencies
 apt-get update
-apt-get install -y docker.io docker-compose curl unzip
+apt-get install -y docker.io docker-compose curl unzip nginx openssl
 
 # Create directory for the zkLogin files
 mkdir -p /opt/portkey-zklogin
@@ -21,6 +21,38 @@ unzip -o $filesDir/$circuitName.zip -d $filesDir && rm $filesDir/$circuitName.zi
 
 # Download the zkLogin_final.zkey file
 curl -L https://portkey-zklogin-ph2-ceremony.s3.amazonaws.com/circuits/zklogin/contributions/zklogin_final.zkey -o $filesDir/zkLogin_final.zkey
+
+# Generate self-signed SSL certificate
+mkdir -p /etc/nginx/ssl
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/nginx.key -out /etc/nginx/ssl/nginx.crt -subj "/C=US/ST=State/L=City/O=Organization/CN=localhost"
+
+# Create Nginx configuration
+cat << EOF > /etc/nginx/sites-available/default
+server {
+    listen 80;
+    server_name _;
+    return 301 https://\$host\$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name _;
+
+    ssl_certificate /etc/nginx/ssl/nginx.crt;
+    ssl_certificate_key /etc/nginx/ssl/nginx.key;
+
+    location / {
+        proxy_pass http://localhost:7020;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+    }
+}
+EOF
+
+# Restart Nginx
+systemctl restart nginx
 
 # Create docker-compose.yml file
 cat << EOF > /opt/portkey-zklogin/docker-compose.yml
@@ -39,7 +71,7 @@ services:
       - ./appsettings.json:/app/appsettings.json
       - ./files:/app/files
     ports:
-      - 80:7020
+      - 127.0.0.1:7020:7020
 EOF
 
 # Create appsettings.json file
