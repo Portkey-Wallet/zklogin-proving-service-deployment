@@ -32,6 +32,8 @@ This repository provides an example deployment script for the Portkey zkLogin Pr
    ```
    When prompted, enter your GCP Project ID.
 
+Note: It's recommended to use a machine with at least 16 cores and 8GB of RAM for optimal performance, as the prover is CPU intensive.
+
 ## What the Script Does
 
 - Enables necessary GCP APIs
