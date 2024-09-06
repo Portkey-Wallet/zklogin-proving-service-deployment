@@ -2,6 +2,10 @@
 
 This repository contains scripts to deploy the Portkey zkLogin Prover service in Google Cloud Platform (GCP).
 
+## Disclaimer
+
+This repository provides an example deployment script for the Portkey zkLogin Prover service. Users are encouraged to adapt and modify these scripts according to their specific requirements, security needs, and best practices. The provided scripts are meant as a starting point and may not be suitable for all production environments without modifications.
+
 ## Prerequisites
 
 1. **GCP Account**: Ensure you have an active GCP account.
@@ -35,7 +39,7 @@ This repository contains scripts to deploy the Portkey zkLogin Prover service in
 - Creates an instance template with the Portkey zkLogin Prover configuration
 - Launches a GCP instance using the template
 - Sets up and runs the Portkey zkLogin Prover service on the instance
-- Exposes port 80 for HTTP traffic
+- Exposes ports 80 and 443 for HTTP and HTTPS traffic
 
 ## Accessing the Service
 
@@ -67,3 +71,5 @@ To avoid unnecessary charges, delete the resources when no longer needed:
 If you encounter issues with service account key creation due to organizational policies, you may need to:
 - Use your own user credentials: `gcloud auth application-default login`
 - Contact your GCP administrator for assistance with service account permissions
+
+For more detailed configuration of the Portkey zkLogin Prover service, refer to the official Portkey documentation.
