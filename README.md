@@ -35,6 +35,22 @@ This repository contains scripts to deploy the Portkey zkLogin Prover service in
 - Creates an instance template with the Portkey zkLogin Prover configuration
 - Launches a GCP instance using the template
 - Sets up and runs the Portkey zkLogin Prover service on the instance
+- Exposes port 80 for HTTP traffic
+
+## Accessing the Service
+
+After deployment, the service will be accessible via HTTP on the instance's external IP address.
+
+1. Find the instance's external IP address:
+   ```
+   gcloud compute instances describe portkey-zklogin-prover --zone=us-central1-a --format='get(networkInterfaces[0].accessConfigs[0].natIP)'
+   ```
+
+2. The instance should be available in a couple of minutes. Once you have the IP address, you can check the status of the service by running the following command:
+   ```
+   IP=$(gcloud compute instances describe portkey-zklogin-prover --zone=us-central1-a --format='get(networkInterfaces[0].accessConfigs[0].natIP)')
+   curl -X GET "http://$IP/v1/health"  -H "accept: text/plain"
+   ```
 
 ## Cleanup
 
